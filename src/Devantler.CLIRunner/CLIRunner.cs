@@ -20,6 +20,7 @@ public class CLIRunner()
   /// <returns></returns>
   public static async Task<(int ExitCode, string Result)> RunAsync(Command command, CancellationToken cancellationToken, CommandResultValidation validation = CommandResultValidation.ZeroExitCode, bool silent = false)
   {
+    ArgumentNullException.ThrowIfNull(command);
     bool isFaulty = false;
     StringBuilder result = new();
     try
@@ -49,13 +50,6 @@ public class CLIRunner()
           case ExitedCommandEvent exited:
             if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
               AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] Process exited with code {exited.ExitCode}");
-            break;
-          default:
-            if (cmdEvent is null)
-            {
-              AnsiConsole.MarkupLine("[bold red]ERROR[/] Command event is 'null'");
-              return (1, "");
-            }
             break;
         }
       }
