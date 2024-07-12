@@ -54,10 +54,9 @@ public static class CLIRunner
         }
       }
     }
-    catch (Exception ex)
+    catch
     {
       isFaulty = true;
-      Console.WriteLine(ex.Message);
     }
     return isFaulty ? (1, result.ToString()) : (0, result.ToString());
   }
