@@ -13,14 +13,12 @@
 ├── .github
 │   └── workflows
 ├── src
-│   └── Devantler.TemplateEngine
+│   └── Devantler.CLIRunner
 └── tests
-    └── Devantler.TemplateEngine.Tests.Unit
-        ├── GeneratorTests
-        └── assets
-            └── templates
+    └── Devantler.CLIRunner.Tests.Integration
+        └── CLIRunnerTests
 
-9 directories
+7 directories
 ```
 <!-- readme-tree end -->
 
