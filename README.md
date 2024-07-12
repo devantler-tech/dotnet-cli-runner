@@ -26,4 +26,4 @@
 
 </details>
 
-A simple .NET template for new projects.
+A simple CLI runner, that can execute CLI commands.
