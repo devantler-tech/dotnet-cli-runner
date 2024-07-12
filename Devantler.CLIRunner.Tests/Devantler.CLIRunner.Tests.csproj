@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Devantler.CLIRunner\Devantler.CLIRunner.csproj" />
+    <ProjectReference Include="..\Devantler.CLIRunner\Devantler.CLIRunner.csproj" />
   </ItemGroup>
 
   <ItemGroup>
