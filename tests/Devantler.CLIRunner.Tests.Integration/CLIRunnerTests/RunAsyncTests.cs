@@ -12,7 +12,7 @@ public class RunAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithValidCommand_ReturnsZeroExitCodeAndCorrectResult()
+  public async Task RunAsync_WithValidCommand_ReturnsZeroExitCodeAndStdout()
   {
     // Arrange
     Environment.SetEnvironmentVariable("DEBUG", "true");
@@ -32,11 +32,11 @@ public class RunAsyncTests
   }
 
   /// <summary>
-  /// Tests that the <see cref="CLIRunner.RunAsync"/> method returns the expected exit code
+  /// Tests that the <see cref="CLIRunner.RunAsync"/> method returns the expected exit code and stderr result
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithInvalidCommand_ReturnsNonZeroExitCode()
+  public async Task RunAsync_WithInvalidCommand_ReturnsOneExitCodeAndNoOutput()
   {
     // Arrange
     var command = new Command("ech")
@@ -46,10 +46,11 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, _) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
 
     // Assert
     Assert.Equal(1, exitCode);
+    Assert.True(string.IsNullOrEmpty(result));
   }
 
   /// <summary>
@@ -57,7 +58,7 @@ public class RunAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithValidCommand_ReturnsZeroExitCodeAndCorrectError()
+  public async Task RunAsync_WithInvalidArgument_ReturnsOneExitCodeAndStderr()
   {
     // Arrange
     var command = new Command("cat")
@@ -71,8 +72,28 @@ public class RunAsyncTests
 
     // Assert
     Assert.Equal(1, exitCode);
-    Assert.NotEmpty(result);
+    Assert.True(!string.IsNullOrEmpty(result));
   }
+
+  /// <summary>
+  /// Tests that the <see cref="CLIRunner.RunAsync"/> method throws an <see cref="ArgumentNullException"/> when the command is null
+  /// </summary>
+  [Fact]
+  public async Task RunAsync_WithNullCommand_ReturnsArgumentNullException()
+  {
+    // Arrange
+    Command command = null!;
+    var cancellationToken = CancellationToken.None;
+    var validation = CommandResultValidation.ZeroExitCode;
+    bool silent = false;
+
+    // Act
+    async Task Act() => await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+
+    // Assert
+    await Assert.ThrowsAsync<ArgumentNullException>(Act);
+  }
+
 }
 
 
