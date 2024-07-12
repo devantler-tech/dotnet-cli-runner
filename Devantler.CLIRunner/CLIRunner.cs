@@ -10,16 +10,16 @@ namespace Devantler.CLIRunner;
 /// </summary>
 public static class CLIRunner
 {
-    /// <summary>
-    /// Run a CLI command and capture its output.
-    /// </summary>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <param name="validation"></param>
-    /// <param name="silent"></param>
-    /// <returns></returns>
-    public static async Task<(int exitCode, string result)> RunAsync(Command command, CancellationToken cancellationToken, CommandResultValidation validation = CommandResultValidation.ZeroExitCode, bool silent = false)
-    {
+  /// <summary>
+  /// Run a CLI command and capture its output.
+  /// </summary>
+  /// <param name="command"></param>
+  /// <param name="cancellationToken"></param>
+  /// <param name="validation"></param>
+  /// <param name="silent"></param>
+  /// <returns></returns>
+  public static async Task<(int exitCode, string result)> RunAsync(Command command, CancellationToken cancellationToken, CommandResultValidation validation = CommandResultValidation.ZeroExitCode, bool silent = false)
+  {
     ArgumentNullException.ThrowIfNull(command);
     bool isFaulty = false;
     StringBuilder result = new();
