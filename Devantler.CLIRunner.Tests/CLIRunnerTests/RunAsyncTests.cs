@@ -23,12 +23,12 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
 
     // Assert
     Assert.Equal(0, exitCode);
     //assert message
-    Assert.Contains("Hello, World!", result);
+    Assert.Contains("Hello, World!", result, StringComparison.Ordinal);
   }
 
   /// <summary>
@@ -46,7 +46,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
 
     // Assert
     Assert.Equal(1, exitCode);
@@ -68,7 +68,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, CommandResultValidation.ZeroExitCode, silent);
+    var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, CommandResultValidation.ZeroExitCode, silent).ConfigureAwait(false);
 
     // Assert
     Assert.Equal(1, exitCode);
@@ -88,10 +88,10 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    async Task Act() => await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+    async Task Act() => await CLIRunner.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentNullException>(Act);
+    _ = await Assert.ThrowsAsync<ArgumentNullException>(Act);
   }
 
 }
