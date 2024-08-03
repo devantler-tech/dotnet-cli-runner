@@ -27,8 +27,10 @@ public class RunAsyncTests
 
     // Assert
     Assert.Equal(0, exitCode);
-    //assert message
     Assert.Contains("Hello, World!", result, StringComparison.Ordinal);
+
+    // Cleanup
+    Environment.SetEnvironmentVariable("DEBUG", null);
   }
 
   /// <summary>
