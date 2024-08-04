@@ -3,12 +3,12 @@ using CliWrap;
 namespace Devantler.CLIRunner.Tests.Integration;
 
 /// <summary>
-/// Integration tests for the <see cref="Runner.RunAsync"/> method.
+/// Integration tests for the <see cref="CLI.RunAsync"/> method.
 /// </summary>
 public class RunAsyncTests
 {
     /// <summary>
-    /// Tests that the <see cref="Runner.RunAsync"/> method returns the expected exit code and stdout result
+    /// Tests that the <see cref="CLI.RunAsync"/> method returns the expected exit code and stdout result
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -23,7 +23,7 @@ public class RunAsyncTests
     bool silent = false;
 
         // Act
-        var (exitCode, result) = await Runner.RunAsync(command, cancellationToken, validation, silent);
+        var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, validation, silent);
 
         // Assert
         Assert.Equal(0, exitCode);
@@ -34,7 +34,7 @@ public class RunAsyncTests
   }
 
     /// <summary>
-    /// Tests that the <see cref="Runner.RunAsync"/> method returns the expected exit code and stderr result
+    /// Tests that the <see cref="CLI.RunAsync"/> method returns the expected exit code and stderr result
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -48,7 +48,7 @@ public class RunAsyncTests
     bool silent = false;
 
         // Act
-        var (exitCode, result) = await Runner.RunAsync(command, cancellationToken, validation, silent);
+        var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, validation, silent);
 
         // Assert
         Assert.Equal(1, exitCode);
@@ -56,7 +56,7 @@ public class RunAsyncTests
   }
 
     /// <summary>
-    /// Tests that the <see cref="Runner.RunAsync"/> method returns the expected exit code and stderr result
+    /// Tests that the <see cref="CLI.RunAsync"/> method returns the expected exit code and stderr result
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -70,7 +70,7 @@ public class RunAsyncTests
     bool silent = false;
 
         // Act
-        var (exitCode, result) = await Runner.RunAsync(command, cancellationToken, CommandResultValidation.ZeroExitCode, silent);
+        var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, CommandResultValidation.ZeroExitCode, silent);
 
         // Assert
         Assert.Equal(1, exitCode);
@@ -78,7 +78,7 @@ public class RunAsyncTests
   }
 
     /// <summary>
-    /// Tests that the <see cref="Runner.RunAsync"/> method throws an <see cref="ArgumentNullException"/> when the command is null
+    /// Tests that the <see cref="CLI.RunAsync"/> method throws an <see cref="ArgumentNullException"/> when the command is null
     /// </summary>
     [Fact]
   public async Task RunAsync_WithNullCommand_ReturnsArgumentNullException()
@@ -90,7 +90,7 @@ public class RunAsyncTests
     bool silent = false;
 
         // Act
-        async Task Act() => await Runner.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
+        async Task Act() => await CLI.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
 
         // Assert
         _ = await Assert.ThrowsAsync<ArgumentNullException>(Act);
