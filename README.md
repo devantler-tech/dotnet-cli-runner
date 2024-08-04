@@ -14,7 +14,7 @@
 │   └── workflows
 ├── Devantler.CLIRunner
 └── Devantler.CLIRunner.Tests
-    └── CLIRunnerTests
+    └── CLITests
 
 5 directories
 ```
