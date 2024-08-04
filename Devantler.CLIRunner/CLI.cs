@@ -1,6 +1,7 @@
 using System.Text;
 using CliWrap;
 using CliWrap.EventStream;
+using CliWrap.Exceptions;
 using Spectre.Console;
 
 namespace Devantler.CLIRunner;
@@ -51,10 +52,14 @@ public static class CLI
             if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
               AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] Process exited with code {exited.ExitCode}");
             break;
+          default:
+            if (cmdEvent is not null && System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
+              AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] {cmdEvent}");
+            break;
         }
       }
     }
-    catch
+    catch (CliWrapException)
     {
       isFaulty = true;
     }
