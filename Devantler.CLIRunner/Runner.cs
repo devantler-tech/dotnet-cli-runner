@@ -8,7 +8,7 @@ namespace Devantler.CLIRunner;
 /// <summary>
 /// A class to run CLI commands and capture their output.
 /// </summary>
-public static class CLIRunner
+public static class Runner
 {
   /// <summary>
   /// Run a CLI command and capture its output.
