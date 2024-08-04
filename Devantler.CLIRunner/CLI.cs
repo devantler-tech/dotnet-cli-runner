@@ -52,9 +52,7 @@ public static class CLI
               AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] Process exited with code {exited.ExitCode}");
             break;
           default:
-            if ((cmdEvent is not null && System.Diagnostics.Debugger.IsAttached) || Environment.GetEnvironmentVariable("DEBUG") is not null)
-              AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] {cmdEvent}");
-            break;
+            throw new CLIException($"Unsupported event type {cmdEvent.GetType()}"); // This should never happen
         }
       }
     }
