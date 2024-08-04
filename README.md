@@ -37,7 +37,7 @@ dotnet add package Devantler.CliRunner
 > [!NOTE]
 > The template engine uses [CLIWrap](https://github.com/Tyrrrz/CliWrap) under the hood. So to learn more about the API, you can visit the above link.
 
-To run a command, you can use the `CliRunner` class.
+To run a command, you can use the `CLI` class.
 
 ```csharp
 using Devantler.CLIRunner;
@@ -48,7 +48,7 @@ var cancellationToken = CancellationToken.None;
 var validation = CommandResultValidation.ZeroExitCode;
 bool silent = false;
 
-var (exitCode, result) = await CLIRunner.RunAsync(command, cancellationToken, validation, silent);
+var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, validation, silent);
 
 Console.WriteLine(exitCode); // Will output 0, as the command was successful
 Console.WriteLine(result); // Will output "Hello, World!", as that is what is printed to stdout
