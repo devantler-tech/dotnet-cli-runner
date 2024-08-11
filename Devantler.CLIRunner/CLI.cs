@@ -15,11 +15,17 @@ public static class CLI
   /// Run a CLI command and capture its output.
   /// </summary>
   /// <param name="command"></param>
-  /// <param name="cancellationToken"></param>
   /// <param name="validation"></param>
   /// <param name="silent"></param>
+  /// <param name="includeStdErr"></param>
+  /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public static async Task<(int exitCode, string result)> RunAsync(Command command, CancellationToken cancellationToken, CommandResultValidation validation = CommandResultValidation.ZeroExitCode, bool silent = false)
+  public static async Task<(int exitCode, string result)> RunAsync(
+    Command command,
+    CommandResultValidation validation = CommandResultValidation.ZeroExitCode,
+    bool silent = false,
+    bool includeStdErr = true,
+    CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(command);
     bool isFaulty = false;
@@ -42,11 +48,14 @@ public static class CLI
             messageQueue.Enqueue(stdOut.Text);
             break;
           case StandardErrorCommandEvent stdErr:
-            if (!silent)
+            if (includeStdErr)
             {
-              Console.WriteLine(stdErr.Text);
+              if (!silent)
+              {
+                Console.WriteLine(stdErr.Text);
+              }
+              messageQueue.Enqueue(stdErr.Text);
             }
-            messageQueue.Enqueue(stdErr.Text);
             break;
           case ExitedCommandEvent exited:
             if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
