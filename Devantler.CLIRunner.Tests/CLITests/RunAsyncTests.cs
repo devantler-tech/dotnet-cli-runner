@@ -12,8 +12,8 @@ public class RunAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithValidCommand_ReturnsZeroExitCodeAndStdout()
-  {
+    public async Task RunAsync_GivenValidCommand_ReturnsZeroExitCodeAndStdout()
+    {
     // Arrange
     Environment.SetEnvironmentVariable("DEBUG", "true");
     var command = new Command("echo")
@@ -38,8 +38,8 @@ public class RunAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithInvalidCommand_ReturnsOneExitCodeAndNoOutput()
-  {
+    public async Task RunAsync_GivenInvalidCommand_ReturnsOneExitCodeAndNoOutput()
+    {
     // Arrange
     var command = new Command("ech")
       .WithArguments("Hello, World!");
@@ -60,8 +60,8 @@ public class RunAsyncTests
   /// </summary>
   /// <returns></returns>
   [Fact]
-  public async Task RunAsync_WithInvalidArgument_ReturnsOneExitCodeAndStderr()
-  {
+    public async Task RunAsync_GivenInvalidArgument_ReturnsOneExitCodeAndStderr()
+    {
     // Arrange
     var command = new Command("cat")
       .WithArguments("--invalid")
@@ -81,8 +81,8 @@ public class RunAsyncTests
   /// Tests that the <see cref="CLI.RunAsync"/> method throws an <see cref="ArgumentNullException"/> when the command is null
   /// </summary>
   [Fact]
-  public async Task RunAsync_WithNullCommand_ReturnsArgumentNullException()
-  {
+    public async Task RunAsync_GivenNullCommand_ReturnsArgumentNullException()
+    {
     // Arrange
     Command command = null!;
     var cancellationToken = CancellationToken.None;
