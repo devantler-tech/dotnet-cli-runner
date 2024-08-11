@@ -23,7 +23,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, validation, silent);
+    var (exitCode, result) = await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken);
 
     // Assert
     Assert.Equal(0, exitCode);
@@ -48,7 +48,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, validation, silent);
+    var (exitCode, result) = await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken);
 
     // Assert
     Assert.Equal(1, exitCode);
@@ -70,7 +70,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLI.RunAsync(command, cancellationToken, CommandResultValidation.ZeroExitCode, silent);
+    var (exitCode, result) = await CLI.RunAsync(command, CommandResultValidation.ZeroExitCode, silent, cancellationToken: cancellationToken);
 
     // Assert
     Assert.Equal(1, exitCode);
@@ -90,7 +90,7 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    async Task Act() => await CLI.RunAsync(command, cancellationToken, validation, silent).ConfigureAwait(false);
+    async Task Act() => await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken).ConfigureAwait(false);
 
     // Assert
     _ = await Assert.ThrowsAsync<ArgumentNullException>(Act);
