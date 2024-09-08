@@ -1,6 +1,6 @@
 using CliWrap;
 
-namespace Devantler.CLIRunner.Tests.Integration;
+namespace Devantler.CLIRunner.Tests.CLITests;
 
 /// <summary>
 /// Integration tests for the <see cref="CLI.RunAsync"/> method.
