@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Text;
 using CliWrap;
 using CliWrap.EventStream;
-using Spectre.Console;
 
 namespace Devantler.CLIRunner;
 
@@ -38,7 +37,12 @@ public static class CLI
         {
           case StartedCommandEvent started:
             if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
-              AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] Process started: {started.ProcessId}");
+            {
+              Console.ForegroundColor = ConsoleColor.Blue;
+              Console.Write("[DEBUG]");
+              Console.ResetColor();
+              Console.WriteLine($" Process started: {started.ProcessId}");
+            }
             break;
           case StandardOutputCommandEvent stdOut:
             if (!silent)
@@ -59,7 +63,12 @@ public static class CLI
             break;
           case ExitedCommandEvent exited:
             if (System.Diagnostics.Debugger.IsAttached || Environment.GetEnvironmentVariable("DEBUG") is not null)
-              AnsiConsole.MarkupLine($"[bold blue]DEBUG[/] Process exited with code {exited.ExitCode}");
+            {
+              Console.ForegroundColor = ConsoleColor.Blue;
+              Console.Write("[DEBUG]");
+              Console.ResetColor();
+              Console.WriteLine($" Process exited with {exited.ExitCode}");
+            }
             break;
           default:
             throw new CLIException($"Unsupported event type {cmdEvent.GetType()}"); // This should never happen
