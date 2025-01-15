@@ -16,7 +16,7 @@
 └── Devantler.CLIRunner.Tests
     └── CLITests
 
-5 directories
+6 directories
 ```
 <!-- readme-tree end -->
 
