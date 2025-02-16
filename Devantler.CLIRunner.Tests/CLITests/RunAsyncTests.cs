@@ -74,7 +74,7 @@ public class RunAsyncTests
 
     // Assert
     Assert.Equal(1, exitCode);
-    Assert.True(!string.IsNullOrEmpty(result));
+    Assert.False(string.IsNullOrEmpty(result));
   }
 
   /// <summary>
