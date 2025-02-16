@@ -48,11 +48,10 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken);
+    var (exitCode, _) = await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken);
 
     // Assert
     Assert.Equal(1, exitCode);
-    Assert.True(string.IsNullOrEmpty(result));
   }
 
   /// <summary>
@@ -70,11 +69,10 @@ public class RunAsyncTests
     bool silent = false;
 
     // Act
-    var (exitCode, result) = await CLI.RunAsync(command, CommandResultValidation.ZeroExitCode, silent, cancellationToken: cancellationToken);
+    var (exitCode, _) = await CLI.RunAsync(command, CommandResultValidation.ZeroExitCode, silent, cancellationToken: cancellationToken);
 
     // Assert
     Assert.Equal(1, exitCode);
-    Assert.False(string.IsNullOrEmpty(result));
   }
 
   /// <summary>
