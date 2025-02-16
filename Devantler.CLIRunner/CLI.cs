@@ -26,12 +26,12 @@ public static class CLI
     bool includeStdErr = true,
     CancellationToken cancellationToken = default)
   {
-    ArgumentNullException.ThrowIfNull(command);
     bool isFaulty = false;
     ConcurrentQueue<string> messageQueue = new();
     try
     {
-      await foreach (var cmdEvent in command.WithValidation(validation).ListenAsync(cancellationToken: cancellationToken))
+      var commandEvents = command.WithValidation(validation).ListenAsync(cancellationToken: cancellationToken);
+      await foreach (var cmdEvent in commandEvents)
       {
         switch (cmdEvent)
         {
@@ -75,11 +75,14 @@ public static class CLI
         }
       }
     }
-#pragma warning disable CA1031 // Do not catch general exception types
-    catch
-#pragma warning restore CA1031 // Do not catch general exception types
+    catch (Exception ex)
     {
       isFaulty = true;
+      messageQueue.Enqueue(ex.Message);
+      if (ex.InnerException is not null)
+      {
+        messageQueue.Enqueue(ex.InnerException.Message);
+      }
     }
     StringBuilder result = new();
     while (messageQueue.TryDequeue(out string? message))

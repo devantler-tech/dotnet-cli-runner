@@ -16,33 +16,7 @@ public class RunAsyncTests
   public async Task RunAsync_GivenValidCommand_ReturnsZeroExitCodeAndStdout()
   {
     // Arrange
-    string commandText = Environment.OSVersion.Platform switch
-    {
-      PlatformID.Win32NT => "cmd.exe",
-      PlatformID.Unix => "echo",
-      PlatformID.MacOSX => "echo",
-      PlatformID.Win32S => throw new NotImplementedException(),
-      PlatformID.Win32Windows => throw new NotImplementedException(),
-      PlatformID.WinCE => throw new NotImplementedException(),
-      PlatformID.Xbox => throw new NotImplementedException(),
-      PlatformID.Other => throw new NotImplementedException(),
-      _ => throw new NotSupportedException("Unsupported platform")
-    };
-
-    string arguments = Environment.OSVersion.Platform switch
-    {
-      PlatformID.Win32NT => "/c echo Hello, World!",
-      PlatformID.Unix => "Hello, World!",
-      PlatformID.MacOSX => "Hello, World!",
-      PlatformID.Win32S => throw new NotImplementedException(),
-      PlatformID.Win32Windows => throw new NotImplementedException(),
-      PlatformID.WinCE => throw new NotImplementedException(),
-      PlatformID.Xbox => throw new NotImplementedException(),
-      PlatformID.Other => throw new NotImplementedException(),
-      _ => throw new NotSupportedException("Unsupported platform")
-    };
-
-    var command = new Command(commandText).WithArguments(arguments);
+    var command = new Command("echo").WithArguments("Hello, World!");
     var cancellationToken = CancellationToken.None;
     var validation = CommandResultValidation.ZeroExitCode;
     bool silent = false;
@@ -96,26 +70,6 @@ public class RunAsyncTests
     // Assert
     Assert.Equal(1, exitCode);
   }
-
-  /// <summary>
-  /// Tests that the <see cref="CLI.RunAsync"/> method throws an <see cref="ArgumentNullException"/> when the command is null
-  /// </summary>
-  [Fact]
-  public async Task RunAsync_GivenNullCommand_ReturnsArgumentNullException()
-  {
-    // Arrange
-    Command command = null!;
-    var cancellationToken = CancellationToken.None;
-    var validation = CommandResultValidation.ZeroExitCode;
-    bool silent = false;
-
-    // Act
-    async Task Act() => await CLI.RunAsync(command, validation, silent, cancellationToken: cancellationToken).ConfigureAwait(false);
-
-    // Assert
-    _ = await Assert.ThrowsAsync<ArgumentNullException>(Act);
-  }
-
 }
 
 
