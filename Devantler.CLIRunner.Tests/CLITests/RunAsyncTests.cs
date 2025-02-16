@@ -16,7 +16,7 @@ public class RunAsyncTests
   {
     // Arrange
     Environment.SetEnvironmentVariable("DEBUG", "true");
-    var command = new Command("echo")
+    var command = new Command("/bin/echo")
       .WithArguments("Hello, World!");
     var cancellationToken = CancellationToken.None;
     var validation = CommandResultValidation.ZeroExitCode;
