@@ -16,7 +16,7 @@ public class RunAsyncTests
   public async Task RunAsync_GivenValidCommand_ReturnsZeroExitCodeAndStdout()
   {
     // Arrange
-    var command = new Command("echo").WithArguments("Hello, World!");
+    var command = new Command("whoami");
     var cancellationToken = CancellationToken.None;
     var validation = CommandResultValidation.ZeroExitCode;
     bool silent = false;
@@ -26,7 +26,8 @@ public class RunAsyncTests
 
     // Assert
     Assert.Equal(0, exitCode);
-    Assert.Contains("Hello, World!", result, StringComparison.Ordinal);
+    // Assert has content
+    Assert.Contains(Environment.UserName, result, StringComparison.OrdinalIgnoreCase);
   }
 
   /// <summary>
