@@ -30,7 +30,11 @@ public static class CLI
     ConcurrentQueue<string> messageQueue = new();
     try
     {
-      var commandEvents = command.WithValidation(validation).ListenAsync(cancellationToken: cancellationToken);
+      var commandEvents = command.WithValidation(validation)
+        .WithStandardInputPipe(PipeSource.FromStream(Console.OpenStandardInput()))
+        .WithStandardOutputPipe(PipeTarget.ToStream(Console.OpenStandardOutput()))
+        .WithStandardErrorPipe(PipeTarget.ToStream(Console.OpenStandardError()))
+        .ListenAsync(cancellationToken: cancellationToken);
       await foreach (var cmdEvent in commandEvents)
       {
         switch (cmdEvent)
