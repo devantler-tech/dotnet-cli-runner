@@ -35,7 +35,7 @@ public static class CLI
         .WithStandardOutputPipe(PipeTarget.ToStream(Console.OpenStandardOutput()))
         .WithStandardErrorPipe(PipeTarget.ToStream(Console.OpenStandardError()))
         .ListenAsync(cancellationToken: cancellationToken);
-      await foreach (var cmdEvent in commandEvents)
+      await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
       {
         switch (cmdEvent)
         {
