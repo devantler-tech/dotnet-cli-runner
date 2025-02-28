@@ -12,11 +12,13 @@
 .
 ├── .github
 │   └── workflows
-├── Devantler.CLIRunner
-└── Devantler.CLIRunner.Tests
-    └── CLITests
+├── src
+│   └── Devantler.CLIRunner
+└── tests
+    └── Devantler.CLIRunner.Tests
+        └── CLITests
 
-6 directories
+8 directories
 ```
 <!-- readme-tree end -->
 
