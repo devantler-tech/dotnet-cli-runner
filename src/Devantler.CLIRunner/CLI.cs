@@ -26,14 +26,18 @@ public static class CLI
     bool includeStdErr = true,
     CancellationToken cancellationToken = default)
   {
+    ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
     ConcurrentQueue<string> messageQueue = new();
     try
     {
+      using var standardInput = Console.OpenStandardInput();
+      using var standardOutput = Console.OpenStandardOutput();
+      using var standardError = Console.OpenStandardError();
       var commandEvents = command.WithValidation(validation)
-        .WithStandardInputPipe(PipeSource.FromStream(Console.OpenStandardInput()))
-        .WithStandardOutputPipe(PipeTarget.ToStream(Console.OpenStandardOutput()))
-        .WithStandardErrorPipe(PipeTarget.ToStream(Console.OpenStandardError()))
+        .WithStandardInputPipe(PipeSource.FromStream(standardInput))
+        .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
+        .WithStandardErrorPipe(PipeTarget.ToStream(standardError))
         .ListenAsync(cancellationToken: cancellationToken);
       await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
       {
