@@ -28,7 +28,7 @@ public static class CLI
   {
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
-    BlockingCollection<string> messageQueue = [];
+    ConcurrentQueue<string> messageQueue = new();
     try
     {
       using var standardInput = Console.OpenStandardInput();
@@ -57,7 +57,7 @@ public static class CLI
             {
               Console.WriteLine(stdOut.Text);
             }
-            messageQueue.Add(stdOut.Text, cancellationToken);
+            messageQueue.Enqueue(stdOut.Text);
             break;
           case StandardErrorCommandEvent stdErr:
             if (includeStdErr)
@@ -66,7 +66,7 @@ public static class CLI
               {
                 Console.WriteLine(stdErr.Text);
               }
-              messageQueue.Add(stdErr.Text, cancellationToken);
+              messageQueue.Enqueue(stdErr.Text);
             }
             break;
           case ExitedCommandEvent exited:
@@ -86,14 +86,14 @@ public static class CLI
     catch (Exception ex)
     {
       isFaulty = true;
-      messageQueue.Add(ex.Message, cancellationToken);
+      messageQueue.Enqueue(ex.Message);
       if (ex.InnerException is not null)
       {
-        messageQueue.Add(ex.InnerException.Message, cancellationToken);
+        messageQueue.Enqueue(ex.InnerException.Message);
       }
     }
     StringBuilder result = new();
-    while (messageQueue.TryTake(out string? message))
+    foreach (var message in messageQueue)
     {
       _ = result.AppendLine(message);
     }
