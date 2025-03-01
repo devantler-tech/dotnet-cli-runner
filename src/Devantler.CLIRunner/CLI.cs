@@ -28,17 +28,17 @@ public static class CLI
   {
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
-    ConcurrentQueue<string> messageQueue = new();
+    BlockingCollection<string> messageQueue = [];
     try
     {
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
+      using var standardInput = Console.OpenStandardInput();
+      using var standardOutput = Console.OpenStandardOutput();
+      using var standardError = Console.OpenStandardError();
       var commandEvents = command.WithValidation(validation)
-        .WithStandardInputPipe(PipeSource.FromStream(Console.OpenStandardInput()))
-        .WithStandardOutputPipe(PipeTarget.ToStream(Console.OpenStandardOutput()))
-        .WithStandardErrorPipe(PipeTarget.ToStream(Console.OpenStandardError()))
+        .WithStandardInputPipe(PipeSource.FromStream(standardInput))
+        .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
+        .WithStandardErrorPipe(PipeTarget.ToStream(standardError))
         .ListenAsync(cancellationToken: cancellationToken);
-#pragma warning restore CA2000 // Dispose objects before losing scope
       await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
       {
         switch (cmdEvent)
@@ -57,7 +57,7 @@ public static class CLI
             {
               Console.WriteLine(stdOut.Text);
             }
-            messageQueue.Enqueue(stdOut.Text);
+            messageQueue.Add(stdOut.Text, cancellationToken);
             break;
           case StandardErrorCommandEvent stdErr:
             if (includeStdErr)
@@ -66,7 +66,7 @@ public static class CLI
               {
                 Console.WriteLine(stdErr.Text);
               }
-              messageQueue.Enqueue(stdErr.Text);
+              messageQueue.Add(stdErr.Text, cancellationToken);
             }
             break;
           case ExitedCommandEvent exited:
@@ -86,14 +86,14 @@ public static class CLI
     catch (Exception ex)
     {
       isFaulty = true;
-      messageQueue.Enqueue(ex.Message);
+      messageQueue.Add(ex.Message, cancellationToken);
       if (ex.InnerException is not null)
       {
-        messageQueue.Enqueue(ex.InnerException.Message);
+        messageQueue.Add(ex.InnerException.Message, cancellationToken);
       }
     }
     StringBuilder result = new();
-    while (messageQueue.TryDequeue(out string? message))
+    while (messageQueue.TryTake(out string? message))
     {
       _ = result.AppendLine(message);
     }
