@@ -29,16 +29,16 @@ public static class CLI
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
     ConcurrentQueue<string> messageQueue = new();
-    using var standardInput = Console.OpenStandardInput();
-    using var standardOutput = Console.OpenStandardOutput();
-    using var standardError = Console.OpenStandardError();
     try
     {
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
       var commandEvents = command.WithValidation(validation)
-        .WithStandardInputPipe(PipeSource.FromStream(standardInput))
-        .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
-        .WithStandardErrorPipe(PipeTarget.ToStream(standardError))
+        .WithStandardInputPipe(PipeSource.FromStream(Console.OpenStandardInput()))
+        .WithStandardOutputPipe(PipeTarget.ToStream(Console.OpenStandardOutput()))
+        .WithStandardErrorPipe(PipeTarget.ToStream(Console.OpenStandardError()))
         .ListenAsync(cancellationToken: cancellationToken);
+#pragma warning restore CA2000 // Dispose objects before losing scope
       await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
       {
         switch (cmdEvent)
@@ -91,12 +91,6 @@ public static class CLI
       {
         messageQueue.Enqueue(ex.InnerException.Message);
       }
-    }
-    finally
-    {
-      standardInput.Close();
-      standardOutput.Close();
-      standardError.Close();
     }
     StringBuilder result = new();
     while (messageQueue.TryDequeue(out string? message))
