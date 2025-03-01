@@ -29,11 +29,11 @@ public static class CLI
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
     ConcurrentQueue<string> messageQueue = new();
+    using var standardInput = Console.OpenStandardInput();
+    using var standardOutput = Console.OpenStandardOutput();
+    using var standardError = Console.OpenStandardError();
     try
     {
-      using var standardInput = Console.OpenStandardInput();
-      using var standardOutput = Console.OpenStandardOutput();
-      using var standardError = Console.OpenStandardError();
       var commandEvents = command.WithValidation(validation)
         .WithStandardInputPipe(PipeSource.FromStream(standardInput))
         .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
@@ -91,6 +91,12 @@ public static class CLI
       {
         messageQueue.Enqueue(ex.InnerException.Message);
       }
+    }
+    finally
+    {
+      standardInput.Close();
+      standardOutput.Close();
+      standardError.Close();
     }
     StringBuilder result = new();
     while (messageQueue.TryDequeue(out string? message))
