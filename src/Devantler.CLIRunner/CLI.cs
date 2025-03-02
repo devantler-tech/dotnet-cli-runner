@@ -28,7 +28,7 @@ public static class CLI
   {
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
-    List<string> messageQueue = [];
+    ConcurrentQueue<string> messageQueue = new();
     try
     {
       using var standardInput = Console.OpenStandardInput();
@@ -39,13 +39,7 @@ public static class CLI
         .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
         .WithStandardErrorPipe(PipeTarget.ToStream(standardError))
         .ListenAsync(cancellationToken: cancellationToken);
-      var commandEventsList = new List<CommandEvent>();
       await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
-      {
-        commandEventsList.Add(cmdEvent);
-      }
-
-      foreach (var cmdEvent in commandEventsList)
       {
         switch (cmdEvent)
         {
@@ -63,7 +57,7 @@ public static class CLI
             {
               Console.WriteLine(stdOut.Text);
             }
-            messageQueue.Add(stdOut.Text);
+            messageQueue.Enqueue(stdOut.Text);
             break;
           case StandardErrorCommandEvent stdErr:
             if (includeStdErr)
@@ -72,7 +66,7 @@ public static class CLI
               {
                 Console.WriteLine(stdErr.Text);
               }
-              messageQueue.Add(stdErr.Text);
+              messageQueue.Enqueue(stdErr.Text);
             }
             break;
           case ExitedCommandEvent exited:
@@ -88,19 +82,18 @@ public static class CLI
             throw new CLIException($"Unsupported event type {cmdEvent.GetType()}"); // This should never happen
         }
       }
-
     }
     catch (Exception ex)
     {
       isFaulty = true;
-      messageQueue.Add(ex.Message);
+      messageQueue.Enqueue(ex.Message);
       if (ex.InnerException is not null)
       {
-        messageQueue.Add(ex.InnerException.Message);
+        messageQueue.Enqueue(ex.InnerException.Message);
       }
     }
     StringBuilder result = new();
-    foreach (var message in messageQueue)
+    while (messageQueue.TryDequeue(out string? message))
     {
       _ = result.AppendLine(message);
     }
