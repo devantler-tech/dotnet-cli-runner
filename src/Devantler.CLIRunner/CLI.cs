@@ -28,7 +28,7 @@ public static class CLI
   {
     ArgumentNullException.ThrowIfNull(command, nameof(command));
     bool isFaulty = false;
-    BlockingCollection<string> messageQueue = [];
+    List<string> messageQueue = [];
     try
     {
       using var standardInput = Console.OpenStandardInput();
@@ -39,7 +39,13 @@ public static class CLI
         .WithStandardOutputPipe(PipeTarget.ToStream(standardOutput))
         .WithStandardErrorPipe(PipeTarget.ToStream(standardError))
         .ListenAsync(cancellationToken: cancellationToken);
+      var commandEventsList = new List<CommandEvent>();
       await foreach (var cmdEvent in commandEvents.ConfigureAwait(false))
+      {
+        commandEventsList.Add(cmdEvent);
+      }
+
+      foreach (var cmdEvent in commandEventsList)
       {
         switch (cmdEvent)
         {
@@ -57,7 +63,7 @@ public static class CLI
             {
               Console.WriteLine(stdOut.Text);
             }
-            messageQueue.Add(stdOut.Text, cancellationToken);
+            messageQueue.Add(stdOut.Text);
             break;
           case StandardErrorCommandEvent stdErr:
             if (includeStdErr)
@@ -66,7 +72,7 @@ public static class CLI
               {
                 Console.WriteLine(stdErr.Text);
               }
-              messageQueue.Add(stdErr.Text, cancellationToken);
+              messageQueue.Add(stdErr.Text);
             }
             break;
           case ExitedCommandEvent exited:
@@ -82,19 +88,19 @@ public static class CLI
             throw new CLIException($"Unsupported event type {cmdEvent.GetType()}"); // This should never happen
         }
       }
+
     }
     catch (Exception ex)
     {
       isFaulty = true;
-      messageQueue.Add(ex.Message, cancellationToken);
+      messageQueue.Add(ex.Message);
       if (ex.InnerException is not null)
       {
-        messageQueue.Add(ex.InnerException.Message, cancellationToken);
+        messageQueue.Add(ex.InnerException.Message);
       }
     }
     StringBuilder result = new();
-    messageQueue.CompleteAdding();
-    foreach (var message in messageQueue.ToList())
+    foreach (var message in messageQueue)
     {
       _ = result.AppendLine(message);
     }
